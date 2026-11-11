@@ -1,0 +1,30 @@
+// The Worker and the static site `vuepress build` emits (src/.vuepress/dist).
+// VuePress writes a real HTML file for every page: a folder's README.md is
+// <folder>/index.html, any other page is <name>.html, and every link it
+// writes names that file (`/guide/`, `/guide/using-vue.html`). The assets
+// serve files exactly as they are named (`html_handling: "none"`), so a
+// `.html` address is answered as it is, as Vercel serves it, not redirected
+// to an extension-less one. A request no file matches reaches the Worker
+// (worker/index.ts), which answers a folder with its index.html; anything
+// else is a missing page, answered with VuePress's 404 page (404.html) and a
+// 404 status (`404-page`).
+//
+// `assets_navigation_has_no_effect`: since the 2025-04-01 compatibility date
+// a browser's navigation (Sec-Fetch-Mode: navigate) that matches no file is
+// answered by the assets' 404 page WITHOUT reaching the Worker, so `/guide/`
+// typed or clicked in a browser would be a 404 while curl got the page. The
+// flag turns that off: every request no file matches reaches the Worker.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vuepress-boilerplate-web",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public", "assets_navigation_has_no_effect"],
+  "assets": {
+    "directory": "./src/.vuepress/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "html_handling": "none"
+  },
+  "observability": { "enabled": true }
+}

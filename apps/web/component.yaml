@@ -1,0 +1,93 @@
+apiVersion: sourceplane.io/v1
+kind: Component
+metadata:
+  name: web
+  description: The VuePress docs site (VuePress 1 on Vue 2, built fully static and served as Cloudflare Workers + Static Assets behind one Worker, each page at the address VuePress links it by and VuePress's 404 page answering a missing one, per environment)
+spec:
+  type: cloudflare-workers-assets-turbo
+  lifecycle: production
+  owner: platform
+  # Its pages, attached to it in the workspace's catalog: what the Docs
+  # library shows for it, and what the catalog's docs and runbook checks read.
+  # Generated from what this manifest and its sources declare.
+  docs:
+    overview: docs/overview.md
+    pages:
+      - { path: docs/architecture.md, role: architecture, title: Architecture }
+      - { path: docs/runbook.md, role: runbook, title: Runbook }
+  # `app`, not `web`: a domain and a component share one name space in the
+  # catalog, and a domain called `web` hid this component from it.
+  domain: app
+  path: apps/web
+  # Its own lane per environment: the app's build is the longest job in the
+  # plan, and a shared lane would wait on it.
+  lane: isolated
+  subscribe:
+    environments:
+      - name: dev
+        profile: verify
+      - name: stage
+        profile: verify
+        profileRules:
+          - profile: deploy
+            when:
+              triggerRef: github-push-main
+      - name: prod
+        profile: verify
+        profileRules:
+          - profile: deploy
+            when:
+              triggerRef: github-push-main
+  parameters:
+    nodeVersion: "22"
+    pnpmVersion: "10.12.1"
+
+    workspaceDir: ../..
+    appDir: .
+
+    turboFilter: "@app/web"
+    # The config the dry run and the deploy hand to wrangler: the Worker
+    # (worker/index.ts) and the static build in src/.vuepress/dist as its
+    # assets, each file served at the address it is named by, and VuePress's
+    # 404 page for a missing one. The site builds fully static, so there is no
+    # adapter and no generated config — this committed file is the one
+    # wrangler deploys.
+    wranglerConfig: wrangler.jsonc
+
+    # `vuepress build src` writes an HTML file per page (index.html,
+    # guide/index.html, guide/using-vue.html, config/index.html, 404.html)
+    # and the hashed JavaScript and CSS to src/.vuepress/dist. The Worker is a
+    # source file wrangler bundles at deploy; the lane checks it exists after
+    # the build like any entry.
+    workerEntrypoint: worker/index.ts
+    assetsDir: src/.vuepress/dist
+
+    # Per-env worker name: vuepress-boilerplate-web-{dev,stage,prod}.
+    workerName: vuepress-boilerplate-web
+    environmentAwareWorkerName: true
+
+    # The account's workers.dev subdomain; exported to the smoke step as
+    # ${WORKERS_DEV_SUBDOMAIN} and used to build ${DEPLOYED_URL}.
+    workersDevSubdomain: your-workers-subdomain
+
+    installCommand: pnpm install --frozen-lockfile
+    # VuePress 1 bakes no origin into the site — every link it writes is a
+    # path under its base, `/` — so the build takes nothing from the
+    # environment; the same build serves every workers.dev address and a
+    # custom domain alike.
+    buildCommand: pnpm exec turbo run build --filter=@app/web
+
+    # Smoke: the home page is VuePress's (its generator tag, and the
+    # template's hero action and features), the app's own JavaScript it names
+    # is served, the guide answers at its folder address and its second page
+    # at the `.html` address VuePress links it by, and a missing page is
+    # VuePress's 404 page with a 404 status. The home page and the guide are
+    # fetched as a browser navigates (Sec-Fetch-Mode: navigate), which the
+    # assets answer differently from a bare request. Each response is
+    # buffered before grep so an early match cannot SIGPIPE curl.
+    smokeCommand: "html=$(curl -sfL -H 'Sec-Fetch-Mode: navigate' \"${DEPLOYED_URL}/\") && echo \"${html}\" | grep -q '<meta name=\"generator\" content=\"VuePress 1.9.7\">' && echo \"${html}\" | grep -q 'Quick Start' && echo \"${html}\" | grep -q 'Feature 1 Title' && js=$(echo \"${html}\" | grep -o '/assets/js/app\\.[0-9a-f]*\\.js' | head -n 1) && [ -n \"${js}\" ] && curl -sf -o /dev/null \"${DEPLOYED_URL}${js}\" && guide=$(curl -sf -H 'Sec-Fetch-Mode: navigate' \"${DEPLOYED_URL}/guide/\") && echo \"${guide}\" | grep -q '<title>Introduction | ' && vue=$(curl -sf \"${DEPLOYED_URL}/guide/using-vue.html\") && echo \"${vue}\" | grep -q '<title>Using Vue in Markdown | ' && missing=$(curl -s -w '\\n%{http_code}' \"${DEPLOYED_URL}/no-such-page\") && echo \"${missing}\" | tail -n 1 | grep -q '^404$' && echo \"${missing}\" | grep -q '<h1>404</h1>'"
+  labels:
+    team: platform
+    layer: delivery
+    surface: web
+    runtime: cloudflare
