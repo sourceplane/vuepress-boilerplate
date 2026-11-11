@@ -1,0 +1,18 @@
+apiVersion: orun.io/v1
+kind: TaskContract
+metadata:
+  name: VP-2
+  title: "The site on Workers"
+spec:
+  goal: Vercel's VuePress template runs on Cloudflare Workers + Static Assets — built static by vuepress build on the runners' Node 22, served as assets behind one Worker with each page at the address VuePress links it by and VuePress's 404 page for a missing one — with its tests, and its README saying how it maps to Vercel
+  affects:
+    - apps/web
+    - tests/web
+    - pnpm-lock.yaml
+    - pnpm-workspace.yaml
+    - README.md
+    - .gitignore
+  doneWhen:
+    - pnpm typecheck, lint, test and build are green
+    - wrangler dev serves the home page and the scripts and stylesheet it names, the guide at /guide/ and /guide, its second page at /guide/using-vue.html, the config reference at /config/, and a missing page, an extension-less page address or a missing chunk as VuePress's 404 page with a 404 status, as Vercel answers each address
+  gates: []
