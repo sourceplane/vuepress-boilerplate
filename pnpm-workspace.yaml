@@ -1,0 +1,13 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "tests/*"
+  - "tooling/*"
+
+# pnpm 10 blocks dependency build scripts unless allow-listed; wrangler's
+# workerd and esbuild need theirs to verify their platform binaries.
+# VuePress's own dependencies' scripts (core-js, highlight.js, vuepress)
+# only print notices, and `vuepress build` needs none of them.
+onlyBuiltDependencies:
+  - esbuild
+  - workerd

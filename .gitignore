@@ -1,0 +1,31 @@
+node_modules/
+dist/
+build/
+# VuePress's output (the site, served as the Worker's assets), and the temp
+# and cache directories VuePress 1 can write beside its sources.
+apps/web/src/.vuepress/dist/
+.temp/
+.cache/
+.wrangler/
+.turbo/
+coverage/
+*.tsbuildinfo
+.env
+.env.local
+.env*.local
+.dev.vars
+.dev.vars.*
+*.log
+plan.json
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+crash.log
+.workspace/
+
+# orun per-job staged workspaces and object-model caches.
+**/.orun/runs/
+**/.orun/
+
