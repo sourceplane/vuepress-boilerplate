@@ -1,0 +1,20 @@
+{
+  "name": "@app/web",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vuepress dev src --port 3000",
+    "build": "vuepress build src",
+    "preview": "wrangler dev",
+    "typecheck": "tsc --noEmit -p tsconfig.worker.json",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@app/eslint-config": "workspace:*",
+    "@app/tsconfig": "workspace:*",
+    "eslint": "^9.27.0",
+    "typescript": "^5.8.3",
+    "vuepress": "1.9.7",
+    "wrangler": "^4.151.0"
+  }
+}

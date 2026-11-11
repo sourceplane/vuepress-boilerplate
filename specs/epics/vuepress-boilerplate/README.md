@@ -9,7 +9,7 @@ baseline that makes a copy of it somebody else's site in one landing.**
 
 | | |
 |---|---|
-| Status | In progress — VP0 on main |
+| Status | In progress — VP1 on main: the site runs on Workers |
 | Upstream | [vercel/examples](https://github.com/vercel/examples) `framework-boilerplates/vuepress` (MIT), at `a4b4827` (2026-11-06; the folder last changed in `cb2643e`, 2025-12-12): VuePress 1.9.7 on Vue 2.7 |
 | Reference | [gatsby-boilerplate](https://github.com/sourceplane/gatsby-boilerplate) — the same `vercel/examples` framework boilerplate, a static site behind one Worker, its tests and its bootstrap; [docusaurus](https://github.com/sourceplane/docusaurus) — a docs site built the same way |
 | Key | `VP` |
