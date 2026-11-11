@@ -4,7 +4,7 @@
 |---|---|---|
 | VP0 — the spec | ✅ | the repository's first commit and VP-1 |
 | VP1 — the site on Workers | ✅ | VP-2 |
-| VP2 — a baseline | planned | VP-3 |
+| VP2 — a baseline | ✅ | VP-3, tagged `baseline-v1` |
 
 ## Departures from the upstream template
 

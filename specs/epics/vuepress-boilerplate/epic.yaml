@@ -9,7 +9,7 @@ metadata:
 spec:
   title: "Vercel's VuePress template on Cloudflare Workers"
   summary: "Vercel's VuePress example — a VuePress 1 docs site: the home page with its hero and features, a two-page guide under its sidebar and a config reference, under the navbar of the config Vercel's live demo runs — built fully static by vuepress build on Node 22 and served as Cloudflare Workers Static Assets behind one small Worker, every page at the address VuePress links it by and a missing one VuePress's 404 page with a 404 status, inside the Cirrus baseline's repository conventions, and becomes an Orun baseline that takes a new VuePress site from nothing to live on stage and prod in one landing."
-  state: started
+  state: completed
   milestones:
     - name: "VP0 — the spec"
       exitCriteria:
