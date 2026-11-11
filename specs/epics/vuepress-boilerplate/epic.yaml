@@ -1,0 +1,30 @@
+# The epic's declaration. metadata.name equals the directory name; metadata.key
+# is the task-key prefix this epic reserves (VP → VP-1, VP-2, …). Owner, target
+# date and health are the platform's — never written here.
+apiVersion: orun.io/v1
+kind: Epic
+metadata:
+  name: vuepress-boilerplate
+  key: VP
+spec:
+  title: "Vercel's VuePress template on Cloudflare Workers"
+  summary: "Vercel's VuePress example — a VuePress 1 docs site: the home page with its hero and features, a two-page guide under its sidebar and a config reference, under the navbar of the config Vercel's live demo runs — built fully static by vuepress build on Node 22 and served as Cloudflare Workers Static Assets behind one small Worker, every page at the address VuePress links it by and a missing one VuePress's 404 page with a 404 status, inside the Cirrus baseline's repository conventions, and becomes an Orun baseline that takes a new VuePress site from nothing to live on stage and prod in one landing."
+  state: started
+  milestones:
+    - name: "VP0 — the spec"
+      exitCriteria:
+        - "the repository is born with its intent, CI, tooling and spec index, and this doc set and the task contracts are on main"
+      tasks: [VP-1]
+    - name: "VP1 — the site on Workers"
+      exitCriteria:
+        - "apps/web is the upstream template on VuePress 1.9.7 with the live demo's config restored, built static by vuepress build, with one Worker in front of src/.vuepress/dist as Workers Static Assets"
+        - "`pnpm typecheck`, `pnpm lint`, `pnpm test` (tests/web, over the sources and the built site) and `pnpm build` are green"
+        - "`wrangler dev` answers every address as Vercel's live example does: the home page, its scripts and stylesheet, the guide at /guide/ and /guide, /guide/using-vue.html, the config reference, and VuePress's 404 page with a 404 status for a missing page, an extension-less page address and a missing chunk"
+        - "the README says how to run, test, preview and deploy it, and how every Vercel piece maps to Cloudflare"
+      tasks: [VP-2]
+    - name: "VP2 — a baseline"
+      exitCriteria:
+        - "blueprint.yaml (the console card) and repo-blueprint.yaml (the build) take a new VuePress site from nothing to live on stage and prod in one landing, then record it"
+        - "a site built from it carries the site only, renamed throughout to its own name, repository and Worker, with the framework's own names intact"
+        - "Baseline CI is green: contract tests, generated component docs, the blueprint read by the pinned orun, the leak gate, the offline bootstrap and the end-to-end tier"
+      tasks: [VP-3]
